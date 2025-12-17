@@ -1497,6 +1497,82 @@ int GetSellTotal(ulong magic){
    return count;
 }
 
+#ifndef __GET_SYMBOL_SIDE_TOTAL_DEFINED__
+#define __GET_SYMBOL_SIDE_TOTAL_DEFINED__
+int GetSymbolSideTotal(bool isBuy){
+   int count = 0;
+   for(int i=OrdersTotal()-1; i>=0; --i){
+      if(!ordinfo.SelectByIndex(i)) continue;
+      if(ordinfo.Symbol()!=_Symbol) continue;
+      ENUM_ORDER_TYPE t = (ENUM_ORDER_TYPE)ordinfo.Type();
+      if(isBuy){
+         if(t==ORDER_TYPE_BUY || t==ORDER_TYPE_BUY_LIMIT || t==ORDER_TYPE_BUY_STOP) count++;
+      }else{
+         if(t==ORDER_TYPE_SELL || t==ORDER_TYPE_SELL_LIMIT || t==ORDER_TYPE_SELL_STOP) count++;
+      }
+   }
+
+   for(int i=PositionsTotal()-1; i>=0; --i){
+      if(!posinfo.SelectByIndex(i)) continue;
+      if(posinfo.Symbol()!=_Symbol) continue;
+      if(isBuy && posinfo.PositionType()==POSITION_TYPE_BUY) count++;
+      if(!isBuy && posinfo.PositionType()==POSITION_TYPE_SELL) count++;
+   }
+   return count;
+}
+#endif
+
+#ifndef __PRICE_WITHIN_TOLERANCE_DEFINED__
+#define __PRICE_WITHIN_TOLERANCE_DEFINED__
+bool PriceWithinTolerance(double price, double level){
+   if(EntryTolerancePoints <= 0) return true;
+   return MathAbs(price - level) <= EntryTolerancePoints * _Point;
+}
+#endif
+
+datetime DayStartServer(){
+   datetime now = TimeCurrent();
+   MqlDateTime dt; TimeToStruct(now, dt);
+   dt.hour = 0; dt.min = 0; dt.sec = 0;
+   return StructToTime(dt);
+}
+
+int CountEntriesToday(string symbol){
+   datetime start = DayStartServer();
+   if(!HistorySelect(start, TimeCurrent())) return 0;
+
+   int count = 0;
+   for(int i=HistoryDealsTotal()-1; i>=0; --i){
+      ulong ticket = HistoryDealGetTicket(i);
+      if(!HistoryDealSelect(ticket)) continue;
+      if(HistoryDealGetString(ticket, DEAL_SYMBOL) != symbol) continue;
+      if((int)HistoryDealGetInteger(ticket, DEAL_ENTRY) != DEAL_ENTRY_IN) continue;
+      count++;
+   }
+   return count;
+}
+
+int CountEntriesTodayByMagic(string symbol, long magic){
+   if(magic <= 0) return 0;
+   datetime start = DayStartServer();
+   if(!HistorySelect(start, TimeCurrent())) return 0;
+
+   int count = 0;
+   for(int i=HistoryDealsTotal()-1; i>=0; --i){
+      ulong ticket = HistoryDealGetTicket(i);
+      if(!HistoryDealSelect(ticket)) continue;
+      if(HistoryDealGetString(ticket, DEAL_SYMBOL) != symbol) continue;
+      if((int)HistoryDealGetInteger(ticket, DEAL_ENTRY) != DEAL_ENTRY_IN) continue;
+      if((long)HistoryDealGetInteger(ticket, DEAL_MAGIC) != magic) continue;
+      count++;
+   }
+   return count;
+}
+
+bool SessionTradedToday(string symbol, long magic){
+   return CountEntriesTodayByMagic(symbol, magic) > 0;
+}
+
 int GetSymbolSideTotal(bool isBuy){
    int count = 0;
    for(int i=OrdersTotal()-1; i>=0; --i){
