@@ -949,12 +949,6 @@ void MonitorLevels(){
    datetime currentDate = DateOnly(iTime(_Symbol, PERIOD_CURRENT, 0));
    datetime currentTime = TimeCurrent();
 
-   int totalEntriesToday = CountEntriesToday(_Symbol);
-   if(totalEntriesToday >= 3){
-      DPrint("[BLOCK] Blocked: daily entry cap reached (3)");
-      return;
-   }
-
    if(!g_prevInit){
       g_prevAsk = ask;
       g_prevBid = bid;
@@ -964,7 +958,7 @@ void MonitorLevels(){
 
    int symbolBuyTotal = GetSymbolSideTotal(true);
    int symbolSellTotal = GetSymbolSideTotal(false);
-
+   
    if(UseSession0 && session0Levels.active){
       if(session0Levels.dayStamp != currentDate){
          session0Levels.buyFired = false;
@@ -974,14 +968,6 @@ void MonitorLevels(){
       }
       int buyCount = GetBuyTotal(session0Levels.magic);
       int sellCount = GetSellTotal(session0Levels.magic);
-
-      bool sessionTraded = SessionTradedToday(_Symbol, (long)session0Levels.magic);
-      if(sessionTraded){
-         session0Levels.active = false;
-         session0Levels.buyFired = true;
-         session0Levels.sellFired = true;
-         DPrint("[BLOCK] Blocked: Daily already traded today");
-      }
 
       if(isCloseTime(TradeCloseHour0, TradeCloseMin0, currentTime)){
          session0Levels.active = false;
@@ -999,8 +985,6 @@ void MonitorLevels(){
                session0Levels.buyFired = true;
                session0Levels.sellFired = true;
                session0Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
          if(g_prevBid > session0Levels.sellLevel && bid <= session0Levels.sellLevel && sellCount == 0 && symbolSellTotal==0 && !session0Levels.sellFired && PriceWithinTolerance(bid, session0Levels.sellLevel)){
@@ -1010,8 +994,6 @@ void MonitorLevels(){
                session0Levels.sellFired = true;
                session0Levels.buyFired = true;
                session0Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
       } else {
@@ -1022,8 +1004,6 @@ void MonitorLevels(){
                session0Levels.buyFired = true;
                session0Levels.sellFired = true;
                session0Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
          if(g_prevAsk < session0Levels.sellLevel && ask >= session0Levels.sellLevel && sellCount == 0 && symbolSellTotal==0 && !session0Levels.sellFired && PriceWithinTolerance(ask, session0Levels.sellLevel)){
@@ -1033,8 +1013,6 @@ void MonitorLevels(){
                session0Levels.sellFired = true;
                session0Levels.buyFired = true;
                session0Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
       }
@@ -1050,14 +1028,6 @@ void MonitorLevels(){
       }
       int buyCount = GetBuyTotal(session1Levels.magic);
       int sellCount = GetSellTotal(session1Levels.magic);
-
-      bool sessionTraded = SessionTradedToday(_Symbol, (long)session1Levels.magic);
-      if(sessionTraded){
-         session1Levels.active = false;
-         session1Levels.buyFired = true;
-         session1Levels.sellFired = true;
-         DPrint("[BLOCK] Blocked: London already traded today");
-      }
 
       if(isCloseTime(TradeCloseHour1, TradeCloseMin1, currentTime)){
          session1Levels.active = false;
@@ -1075,8 +1045,6 @@ void MonitorLevels(){
                session1Levels.buyFired = true;
                session1Levels.sellFired = true;
                session1Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
          if(g_prevBid > session1Levels.sellLevel && bid <= session1Levels.sellLevel && sellCount == 0 && symbolSellTotal==0 && !session1Levels.sellFired && PriceWithinTolerance(bid, session1Levels.sellLevel)){
@@ -1086,8 +1054,6 @@ void MonitorLevels(){
                session1Levels.sellFired = true;
                session1Levels.buyFired = true;
                session1Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
       } else {
@@ -1098,8 +1064,6 @@ void MonitorLevels(){
                session1Levels.buyFired = true;
                session1Levels.sellFired = true;
                session1Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
          if(g_prevAsk < session1Levels.sellLevel && ask >= session1Levels.sellLevel && sellCount == 0 && symbolSellTotal==0 && !session1Levels.sellFired && PriceWithinTolerance(ask, session1Levels.sellLevel)){
@@ -1109,8 +1073,6 @@ void MonitorLevels(){
                session1Levels.sellFired = true;
                session1Levels.buyFired = true;
                session1Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
       }
@@ -1126,14 +1088,6 @@ void MonitorLevels(){
       }
       int buyCount = GetBuyTotal(session2Levels.magic);
       int sellCount = GetSellTotal(session2Levels.magic);
-
-      bool sessionTraded = SessionTradedToday(_Symbol, (long)session2Levels.magic);
-      if(sessionTraded){
-         session2Levels.active = false;
-         session2Levels.buyFired = true;
-         session2Levels.sellFired = true;
-         DPrint("[BLOCK] Blocked: Asia already traded today");
-      }
 
       if(isCloseTime(TradeCloseHour2, TradeCloseMin2, currentTime)){
          session2Levels.active = false;
@@ -1151,8 +1105,6 @@ void MonitorLevels(){
                session2Levels.buyFired = true;
                session2Levels.sellFired = true;
                session2Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
          if(g_prevBid > session2Levels.sellLevel && bid <= session2Levels.sellLevel && sellCount == 0 && symbolSellTotal==0 && !session2Levels.sellFired && PriceWithinTolerance(bid, session2Levels.sellLevel)){
@@ -1162,8 +1114,6 @@ void MonitorLevels(){
                session2Levels.sellFired = true;
                session2Levels.buyFired = true;
                session2Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
       } else {
@@ -1174,8 +1124,6 @@ void MonitorLevels(){
                session2Levels.buyFired = true;
                session2Levels.sellFired = true;
                session2Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
          if(g_prevAsk < session2Levels.sellLevel && ask >= session2Levels.sellLevel && sellCount == 0 && symbolSellTotal==0 && !session2Levels.sellFired && PriceWithinTolerance(ask, session2Levels.sellLevel)){
@@ -1185,8 +1133,6 @@ void MonitorLevels(){
                session2Levels.sellFired = true;
                session2Levels.buyFired = true;
                session2Levels.active = false;
-               totalEntriesToday++;
-               if(totalEntriesToday >= 3) return;
             }
          }
       }
@@ -1625,6 +1571,103 @@ int CountEntriesTodayByMagic(string symbol, long magic){
 
 bool SessionTradedToday(string symbol, long magic){
    return CountEntriesTodayByMagic(symbol, magic) > 0;
+}
+
+int GetSymbolSideTotal(bool isBuy){
+   int count = 0;
+   for(int i=OrdersTotal()-1; i>=0; --i){
+      if(!ordinfo.SelectByIndex(i)) continue;
+      if(ordinfo.Symbol()!=_Symbol) continue;
+      ENUM_ORDER_TYPE t = (ENUM_ORDER_TYPE)ordinfo.Type();
+      if(isBuy){
+         if(t==ORDER_TYPE_BUY || t==ORDER_TYPE_BUY_LIMIT || t==ORDER_TYPE_BUY_STOP) count++;
+      }else{
+         if(t==ORDER_TYPE_SELL || t==ORDER_TYPE_SELL_LIMIT || t==ORDER_TYPE_SELL_STOP) count++;
+      }
+   }
+
+   for(int i=PositionsTotal()-1; i>=0; --i){
+      if(!posinfo.SelectByIndex(i)) continue;
+      if(posinfo.Symbol()!=_Symbol) continue;
+      if(isBuy && posinfo.PositionType()==POSITION_TYPE_BUY) count++;
+      if(!isBuy && posinfo.PositionType()==POSITION_TYPE_SELL) count++;
+   }
+   return count;
+}
+
+bool PriceWithinTolerance(double price, double level){
+   if(EntryTolerancePoints <= 0) return true;
+   return MathAbs(price - level) <= EntryTolerancePoints * _Point;
+}
+
+datetime DayStartServer(){
+   datetime now = TimeCurrent();
+   MqlDateTime dt; TimeToStruct(now, dt);
+   dt.hour = 0; dt.min = 0; dt.sec = 0;
+   return StructToTime(dt);
+}
+
+int CountEntriesToday(string symbol){
+   datetime start = DayStartServer();
+   if(!HistorySelect(start, TimeCurrent())) return 0;
+
+   int count = 0;
+   for(int i=HistoryDealsTotal()-1; i>=0; --i){
+      ulong ticket = HistoryDealGetTicket(i);
+      if(!HistoryDealSelect(ticket)) continue;
+      if(HistoryDealGetString(ticket, DEAL_SYMBOL) != symbol) continue;
+      if((int)HistoryDealGetInteger(ticket, DEAL_ENTRY) != DEAL_ENTRY_IN) continue;
+      count++;
+   }
+   return count;
+}
+
+int CountEntriesTodayByMagic(string symbol, long magic){
+   if(magic <= 0) return 0;
+   datetime start = DayStartServer();
+   if(!HistorySelect(start, TimeCurrent())) return 0;
+
+   int count = 0;
+   for(int i=HistoryDealsTotal()-1; i>=0; --i){
+      ulong ticket = HistoryDealGetTicket(i);
+      if(!HistoryDealSelect(ticket)) continue;
+      if(HistoryDealGetString(ticket, DEAL_SYMBOL) != symbol) continue;
+      if((int)HistoryDealGetInteger(ticket, DEAL_ENTRY) != DEAL_ENTRY_IN) continue;
+      if((long)HistoryDealGetInteger(ticket, DEAL_MAGIC) != magic) continue;
+      count++;
+   }
+   return count;
+}
+
+bool SessionTradedToday(string symbol, long magic){
+   return CountEntriesTodayByMagic(symbol, magic) > 0;
+}
+
+int GetSymbolSideTotal(bool isBuy){
+   int count = 0;
+   for(int i=OrdersTotal()-1; i>=0; --i){
+      if(!ordinfo.SelectByIndex(i)) continue;
+      if(ordinfo.Symbol()!=_Symbol) continue;
+      ENUM_ORDER_TYPE t = (ENUM_ORDER_TYPE)ordinfo.Type();
+      if(isBuy){
+         if(t==ORDER_TYPE_BUY || t==ORDER_TYPE_BUY_LIMIT || t==ORDER_TYPE_BUY_STOP) count++;
+      }else{
+         if(t==ORDER_TYPE_SELL || t==ORDER_TYPE_SELL_LIMIT || t==ORDER_TYPE_SELL_STOP) count++;
+      }
+   }
+
+   for(int i=PositionsTotal()-1; i>=0; --i){
+      if(!posinfo.SelectByIndex(i)) continue;
+      if(posinfo.Symbol()!=_Symbol) continue;
+      if(isBuy && posinfo.PositionType()==POSITION_TYPE_BUY) count++;
+      if(!isBuy && posinfo.PositionType()==POSITION_TYPE_SELL) count++;
+   }
+   return count;
+}
+
+bool PriceWithinTolerance(double price, double level){
+   if(EntryTolerancePoints <= 0) return true;
+   return MathAbs(price - level) <= EntryTolerancePoints * _Point;
 }
 
 bool HasPositionOrOrder(ulong magic){
